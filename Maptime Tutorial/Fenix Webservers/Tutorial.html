@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+            <title>Tutorial</title>
+            <link rel="stylesheet" href="leaflet/leaflet.css"/>
+            <script src="leaflet/leaflet.js"></script>
+            <link rel="stylesheet" href="Opmaak.css" />
+        <script src="js/vd.geojson"></script>
+                                    
+    </head>
+    
+    <body>
+        <H1>Leaflet Tutorial</H1>
+            <div id="map"></div>
+<script>
+//initialize the map         
+        var map = L.map('map').setView([51.76736449, 5.52261686], 12);
+    
+//baselayer        
+        var achtergrondkaart = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png',
+            {
+            attribution: '<a href="http://openstreetmap.org">OpenStreetMap</a>contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+            maxZoom: 19
+            }
+        );
+    
+    achtergrondkaart.addTo(map);
+    
+       
+//pop-ups
+
+        var thuis = L.marker([51.76736449, 5.52261686]).addTo(map);
+        var popup = "thuis"; thuis.bindPopup(popup);
+    
+        var marlie = L.marker([51.7657557, 5.560994899999969 ]).addTo(map);
+        var popup = "marlie"; marlie.bindPopup(popup);
+    
+        var werk = L.marker([51.77542450000001, 5.55041140000003 ]).addTo(map);
+        var popup = "werk"; werk.bindPopup(popup);
+    
+        var school = L.marker([51.68647559999999, 5.28556930000002 ]).addTo(map);
+        var popup = "school"; school.bindPopup(popup);
+    
+        var stage = L.marker([51.82097889999999, 5.842908399999942 ]).addTo(map);
+        var popup = "stage"; stage.bindPopup(popup);
+    
+//cirkel
+        var circle = L.circle([51.76736449, 5.52261686], 1000, {
+            color: 'red',
+            fillColor: 'f#03',
+            fillOpacity: 0.5
+        }).addTo(map);
+    
+//poligoon
+        var polygon = L.polygon([
+            [51.76736449, 5.52261686],
+            [51.7657557, 5.560994899999969],
+            [51.77542450000001, 5.55041140000003]
+        ]).addTo(map);
+
+//PDOK map image
+        
+            var cbs_cars = L.tileLayer.wms('http://geodata.nationaalgeoregister.nl/wijkenbuurten2014/wms', {
+            layers: 'cbs_buurten_2014',
+            opacity: 0.2,
+            styles: 'wijkenbuurten_thema_buurten_gemeentewijkbuurt_gemiddeld_aantal_autos_per_huishouden',
+            format: 'image/png',
+            attribution: '<a href="http://www.cbs.nl/">Centraal Bureau voor de Statistiek</a>',
+        }).addTo(map);
+
+//geojson ding
+    //geojson zonder jQuery met xhr definieer eerst de icon
+
+        var vdIcon = L.icon({
+            iconUrl: "images/vd.png",
+            iconSize: [20,20]
+        });
+    //maak vervolgens een geojson laag
+
+       var geojson = L.geoJson(null,{
+            pointToLayer: function(feature,latlng){
+                return L.marker(latlng, {icon: vdIcon});
+            }
+        }).addTo(map);           
+
+    //daarna stop je de daadwerkelijke geojson hierin
+
+    var xhr = new XMLHttpRequest();
+        xhr.open('GET', encodeURI("js/vd.geojson"));
+        xhr.onload = function() {
+        if (xhr.status === 200) {
+        geojson.addData(JSON.parse(xhr.responseText));
+    } else {
+        alert('Request failed.  Returned status of ' + xhr.status);
+    }
+    };
+    xhr.send();  
+    
+    
+    
+    </script>       
+    </body>
+</html>

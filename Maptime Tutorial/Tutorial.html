@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+            <title>Tutorial</title>
+            <link rel="stylesheet" href="leaflet/leaflet.css"/>
+            <script src="leaflet/leaflet.js"></script>
+            <link rel="stylesheet" href="Opmaak.css" />
+            <script src="js/vd.geojson"></script>
+                                          
+    </head>
+    
+    <body>
+        <H1>Leaflet Tutorial</H1>
+            <div id="map"></div>
+<script>
+//initialize the map         
+        var map = L.map('map').setView([51.76736449, 5.52261686], 11);
+    
+  
+//baselayer        
+        var achtergrondkaart = L.tileLayer('http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg',
+            {
+            attribution: '<a href="http://openstreetmap.org">OpenStreetMap</a>contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+            maxZoom: 19
+            }
+        );
+    
+    achtergrondkaart.addTo(map);
+    
+       
+//pop-ups
+
+        var thuis = L.marker([51.76736449, 5.52261686]).addTo(map);
+        var popup = "thuis"; thuis.bindPopup(popup);
+    
+        var marlie = L.marker([51.7657557, 5.560994899999969 ]).addTo(map);
+        var popup = "marlie"; marlie.bindPopup(popup);
+    
+        var werk = L.marker([51.77542450000001, 5.55041140000003 ]).addTo(map);
+        var popup = "werk"; werk.bindPopup(popup);
+    
+        var school = L.marker([51.68647559999999, 5.28556930000002 ]).addTo(map);
+        var popup = "school"; school.bindPopup(popup);
+    
+        var stage = L.marker([51.82097889999999, 5.842908399999942 ]).addTo(map);
+        var popup = "stage"; stage.bindPopup(popup);
+    
+//cirkel
+        var circle = L.circle([51.76736449, 5.52261686], 1000, {
+            color: 'red',
+            fillColor: 'f#03',
+            fillOpacity: 0.5
+        }).addTo(map);
+    
+//poligoon
+        var polygon = L.polygon([
+            [51.76736449, 5.52261686],
+            [51.7657557, 5.560994899999969],
+            [51.77542450000001, 5.55041140000003]
+        ]).addTo(map);
+    
+//lijn
+            var pointA = new L.LatLng(52.635308, 5.812496);
+            var pointB = new L.LatLng(45.984461, 6.70641);
+            var pointList = [pointA, pointB];
+            
+            var firstpolyline = new L.Polyline(pointList, {
+                color: 'red',
+                weight: 30,
+                opacity: 0.5,
+                smoothFactor: 1
+
+            });
+            firstpolyline.addTo(map);
+
+//PDOK map image
+        
+    //maak een geojson laag
+
+       var geojson = L.geoJson(null,{
+            pointToLayer: function(feature,latlng){
+                return L.marker(latlng, {icon: vdIcon});
+            }
+        }).addTo(map);           
+
+    //daarna stop je de daadwerkelijke geojson hierin
+
+    var skeeler = new XMLHttpRequest();
+        skeeler.open('GET', encodeURI("js/skeelerroute.geojson"), true);
+        skeeler.onload = function() {
+        if (skeeler.status === 200) {
+        geojson.addData(JSON.parse(skeeler.responseText));
+    } else {
+        alert('Request failed.  Returned status of ' + skeeler.status);
+    }
+    };
+    skeeler.send();  
+    
+    var E1 = new XMLHttpRequest();
+        E1.open('GET', encodeURI("js/E1.geojson"), true);
+        E1.onload = function() {
+        if (E1.status === 200) {
+        geojson.addData(JSON.parse(E1.responseText));
+    } else {
+        alert('Request failed.  Returned status of ' + E1.status);
+    }
+    };
+    E1.send(); 
+    
+    var landen = new XMLHttpRequest();
+        landen.open('GET', encodeURI("js/landen.json"), true);
+        landen.onload = function() {
+        if (landen.status === 200) {
+        geojson.addData(JSON.parse(landen.responseText));
+    } else {
+        alert('Request failed.  Returned status of ' + landen.status);
+    }
+    };
+    landen.send(); 
+    
+        </script>       
+    </body>
+</html>
